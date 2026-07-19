@@ -223,6 +223,32 @@
       mobile.classList.toggle("open");
       if (transparent) host.classList.remove("transparent");
     });
+
+    buildGlobe();
+  }
+
+  /* ---------------- SPINNING GLOBE (Our Presence quick link) ---------------- */
+  function buildGlobe() {
+    if (document.getElementById("mv-globe-link")) return;
+    if (!document.getElementById("mv-globe-style")) {
+      var st = document.createElement("style");
+      st.id = "mv-globe-style";
+      st.textContent =
+        "@keyframes mvGlobeSpin{to{transform:rotate(360deg)}}" +
+        "#mv-globe-link{position:fixed;top:96px;right:24px;z-index:999;width:46px;height:46px;border-radius:13px;" +
+        "background:rgba(18,32,42,.82);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);" +
+        "display:inline-flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,.28);text-decoration:none;" +
+        "transition:transform .2s ease,background .2s ease,border-color .2s ease}" +
+        "#mv-globe-link:hover{transform:translateY(-2px);background:rgba(227,91,131,.92);border-color:rgba(227,91,131,.6)}" +
+        "#mv-globe-link svg{animation:mvGlobeSpin 6s linear infinite;transform-origin:50% 50%}";
+      document.head.appendChild(st);
+    }
+    var a = document.createElement("a");
+    a.id = "mv-globe-link";
+    a.href = "presence.html";
+    a.title = "Our Global Presence";
+    a.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M4.5 7h15M4.5 17h15" stroke-width="1.4"/></svg>';
+    document.body.appendChild(a);
   }
 
   /* ---------------- FOOTER ---------------- */
@@ -613,6 +639,181 @@
         '</div></div></section>';
   }
 
+  /* ---------------- OUR PRESENCE PAGE ---------------- */
+  var PRESENCE_ICONS = {
+    heart: '<path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/>',
+    bone: '<path d="M7 7l10 10M7 7a2.2 2.2 0 1 0-1.6 3.7L8 13M17 17a2.2 2.2 0 1 0 1.6-3.7L16 11"/><path d="M7 7a2.2 2.2 0 1 1 3.7-1.6L13 8M17 17a2.2 2.2 0 1 1-3.7 1.6L11 16"/>',
+    plastic: '<path d="M12 3v18M5 8c0 4 3 7 7 7s7-3 7-7"/><circle cx="12" cy="6" r="2"/>',
+    cosmetic: '<path d="M9 3l1.5 4L15 8l-3.5 2L10 15 8.5 10 5 8l4-1z"/><circle cx="17" cy="16" r="3"/>',
+    physio: '<circle cx="12" cy="5" r="2"/><path d="M6 21l3-7 3 2 3-2 3 7M9 9l3 2 3-2"/>',
+    weight: '<circle cx="12" cy="12" r="8"/><path d="M12 4v4l2.5 2.5"/>',
+    cancer: '<path d="M12 2v20M2 12h20" stroke-width="1.4"/><circle cx="12" cy="12" r="4"/>',
+    ivf: '<circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/>',
+    brain: '<path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 6 0V4a2 2 0 0 0-4 0M15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4"/>',
+    eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    transplant: '<path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/><path d="M12 8v6M9 11h6" stroke="#fff"/>',
+    dental: '<path d="M12 3c-3 0-5 1.5-5 4 0 4 1 13 2.5 13S11 15 12 15s1 5 2.5 5S17 11 17 7c0-2.5-2-4-5-4z"/>'
+  };
+
+  function buildPresence() {
+    var root = document.getElementById("presence-root");
+    if (!root) return;
+    document.title = "Our Global Presence | MEDIva Healthcare Solutions";
+    var href = function (id) { return "body-part.html?part=" + id; };
+    var indiaCities = ['Bengaluru','Delhi','Goa','Jaipur','Mangaluru','Salem','Vijayawada','Pune','Patiala','Mysuru','Kolkata','Gurugram','Ghaziabad','Bhubaneswar','Siliguri City','Ranchi'];
+    var hubs = [
+      { flag: '\uD83C\uDDEE\uD83C\uDDF3', country: 'India', desc: '16 cities from metro hubs to emerging towns \u2014 the heart of our accredited hospital network.' },
+      { flag: '\uD83C\uDDE6\uD83C\uDDEA', country: 'Dubai, UAE', desc: 'A Gulf coordination hub supporting patients travelling to India for treatment.' },
+      { flag: '\uD83C\uDDFA\uD83C\uDDF8', country: 'United States', desc: 'NRI family liaison and consultation support across major US cities.' }
+    ];
+    var services = [
+      { icon: 'heart', title: 'Cardiology & Heart Surgery', sub: 'Bypass, valve & rhythm care', href: href('heart') },
+      { icon: 'bone', title: 'Orthopedics & Joint Replacement', sub: 'Knee, hip & sports injury', href: href('knee') },
+      { icon: 'plastic', title: 'Plastic & Reconstructive Surgery', sub: 'Reconstruction & micro-surgery', href: href('hand') },
+      { icon: 'cosmetic', title: 'Cosmetic & Aesthetics', sub: 'Skin, hair & aesthetic care', href: href('eyes') },
+      { icon: 'physio', title: 'Physiotherapy & Rehab', sub: 'Recovery & mobility programs', href: href('spine') },
+      { icon: 'weight', title: 'Weight Management & Bariatric', sub: 'Medical & surgical weight care', href: href('liver') },
+      { icon: 'cancer', title: 'Cancer Treatment', sub: 'Surgery, chemo & radiation', href: href('lungs') },
+      { icon: 'ivf', title: 'Fertility / IVF', sub: 'Reproductive medicine', href: href('fertility') },
+      { icon: 'brain', title: 'Neurology & Neurosurgery', sub: 'Brain, spine & nerve care', href: href('brain') },
+      { icon: 'transplant', title: 'Organ Transplant', sub: 'Kidney, liver & more', href: href('kidney') },
+      { icon: 'eye', title: 'Dental & Vision Care', sub: 'Eye surgery & dental work', href: href('eyes') },
+      { icon: 'dental', title: 'Preventive Health Checkups', sub: 'Full-body screening', href: href('stomach') }
+    ];
+    var svic = function (k) { return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f4789a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + (PRESENCE_ICONS[k] || PRESENCE_ICONS.heart) + '</svg>'; };
+
+    root.style.cssText = "font-family:'Plus Jakarta Sans',sans-serif;background:radial-gradient(120% 120% at 50% 0%,#12202a 0%,#0b141b 55%,#070d12 100%);padding:120px 28px 90px;color:#fff;overflow:hidden;display:block";
+    root.innerHTML =
+      '<style>@keyframes mvPulse{0%{transform:scale(1);opacity:.55}70%{transform:scale(3.4);opacity:0}100%{opacity:0}}' +
+      '.mv-dot-ring{transform-box:fill-box;transform-origin:center;animation:mvPulse 2.6s ease-out infinite}' +
+      '.mv-country{transition:fill .18s ease;cursor:default}' +
+      '.mv-svc-card:hover{transform:translateY(-5px);border-color:rgba(244,120,154,.55)!important;box-shadow:0 20px 44px rgba(0,0,0,.28)!important}' +
+      '.mv-svc-card:hover .mv-svc-ic{background:linear-gradient(135deg,#f4789a,#e35b83)!important}' +
+      '.mv-svc-card:hover .mv-svc-ic svg{stroke:#fff!important}' +
+      '@media(max-width:940px){.mv-hub-grid{grid-template-columns:1fr!important}.mv-svc-grid{grid-template-columns:1fr 1fr!important}}</style>' +
+      '<div style="max-width:1280px;margin:0 auto">' +
+        '<div style="text-align:center;max-width:720px;margin:0 auto 46px">' +
+          '<span style="font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#f4789a">Our Presence</span>' +
+          '<h2 style="font-family:\'Newsreader\',serif;font-weight:500;font-size:46px;line-height:1.08;margin:12px 0 14px;letter-spacing:-.5px">Care that spans the globe</h2>' +
+          '<p style="font-size:16.5px;line-height:1.7;color:#9fb3bf;margin:0">A deep network across India, with dedicated coordination hubs in the United States and Dubai. Hover any country to explore \u2014 every red marker is a city where MEDIva is on the ground.</p>' +
+        '</div>' +
+        '<div style="position:relative;border-radius:26px;overflow:hidden;background:#060b10;border:1px solid rgba(255,255,255,.06);box-shadow:inset 0 0 120px rgba(0,0,0,.6)">' +
+          '<div id="mv-map" style="width:100%;min-height:420px"></div>' +
+          '<div id="mv-tip" style="position:absolute;pointer-events:none;z-index:5;opacity:0;transform:translateY(6px);transition:opacity .16s,transform .16s;background:rgba(11,20,27,.94);border:1px solid rgba(244,120,154,.4);border-radius:14px;padding:14px 16px;min-width:200px;max-width:320px;box-shadow:0 20px 50px rgba(0,0,0,.5);backdrop-filter:blur(6px)"></div>' +
+          '<div style="position:absolute;left:22px;bottom:20px;display:flex;gap:18px;align-items:center;font-size:12.5px;color:#8ba0ac">' +
+            '<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:11px;height:11px;border-radius:50%;background:#ff4d4f;box-shadow:0 0 10px #ff4d4f"></span>Presence city</span>' +
+            '<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:11px;height:11px;border-radius:3px;background:#ef5f86"></span>Hovered country</span>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-top:26px;background:linear-gradient(135deg,#0f9b8e,#0aa39a);border-radius:20px;padding:26px 30px;box-shadow:0 18px 44px rgba(10,163,154,.22)">' +
+          '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span style="width:9px;height:9px;border-radius:50%;background:#fff"></span>' +
+          '<span style="font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#eafffb">Our Presence in India</span></div>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:10px 0">' +
+            indiaCities.map(function (n) { return '<span style="font-weight:700;font-size:15px;letter-spacing:.5px;color:#fff;padding:4px 22px;border-right:1px solid rgba(255,255,255,.35)">' + esc(n) + '</span>'; }).join('') +
+          '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px" class="mv-hub-grid">' +
+          hubs.map(function (h) { return '<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:22px 24px">' +
+            '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px"><span style="font-size:24px">' + h.flag + '</span>' +
+            '<span style="font-weight:800;font-size:17px;color:#fff">' + esc(h.country) + '</span></div>' +
+            '<div style="font-size:13.5px;color:#9fb3bf;line-height:1.6">' + esc(h.desc) + '</div></div>'; }).join('') +
+        '</div>' +
+        '<div style="margin-top:64px">' +
+          '<div style="text-align:center;max-width:660px;margin:0 auto 34px">' +
+            '<span style="font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#f4789a">Specialities On Offer</span>' +
+            '<h3 style="font-family:\'Newsreader\',serif;font-weight:500;font-size:36px;line-height:1.1;margin:10px 0 0;letter-spacing:-.5px;color:#fff">Treatments patients travel to us for</h3>' +
+          '</div>' +
+          '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px" class="mv-svc-grid">' +
+            services.map(function (s) { return '<a href="' + s.href + '" class="mv-svc-card" style="text-decoration:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:18px;padding:22px 20px;transition:transform .22s,border-color .22s,box-shadow .22s;display:block">' +
+              '<span class="mv-svc-ic" style="width:46px;height:46px;border-radius:12px;background:rgba(244,120,154,.14);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;transition:background .22s">' + svic(s.icon) + '</span>' +
+              '<h4 style="font-size:15.5px;font-weight:700;color:#fff;margin:0 0 5px;line-height:1.3">' + esc(s.title) + '</h4>' +
+              '<p style="font-size:12.5px;color:#8ba0ac;margin:0;line-height:1.5">' + esc(s.sub) + '</p></a>'; }).join('') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    drawPresenceMap();
+  }
+
+  function drawPresenceMap() {
+    if (!window.d3 || !window.topojson) { setTimeout(drawPresenceMap, 60); return; }
+    var el = document.getElementById("mv-map");
+    if (!el) return;
+    el.innerHTML = '';
+    var d3 = window.d3, topojson = window.topojson;
+    var W = 1280, H = 620;
+    var GREY = '#333c48', GREY_PRESENCE = '#465366', PINK = '#ef5f86';
+    var presenceNames = { 'India': 1, 'United States of America': 1, 'United Arab Emirates': 1 };
+    var cities = {
+      'India': [['Bengaluru',12.97,77.59],['Delhi',28.61,77.21],['Goa',15.30,74.12],['Jaipur',26.91,75.79],['Mangaluru',12.91,74.86],['Salem',11.66,78.15],['Vijayawada',16.51,80.65],['Pune',18.52,73.86],['Patiala',30.34,76.39],['Mysuru',12.30,76.64],['Kolkata',22.57,88.36],['Gurugram',28.46,77.03],['Ghaziabad',28.67,77.45],['Bhubaneswar',20.30,85.82],['Siliguri',26.73,88.39],['Ranchi',23.34,85.31]],
+      'United States of America': [['New York',40.71,-74.01],['Houston',29.76,-95.37],['Los Angeles',34.05,-118.24]],
+      'United Arab Emirates': [['Dubai',25.20,55.27],['Abu Dhabi',24.45,54.38]]
+    };
+    var labels = { 'United States of America': 'United States', 'United Arab Emirates': 'Dubai, UAE', 'India': 'India' };
+    var tip = document.getElementById('mv-tip');
+
+    function showTip(e, name) {
+      var rect = el.getBoundingClientRect(), html;
+      if (presenceNames[name]) {
+        html = '<div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:8px;display:flex;align-items:center;gap:7px">' +
+          '<span style="width:8px;height:8px;border-radius:50%;background:#ff4d4f;box-shadow:0 0 8px #ff4d4f"></span>' + (labels[name] || name) + '</div>' +
+          '<div style="display:flex;flex-wrap:wrap;gap:5px">' +
+          cities[name].map(function (c) { return '<span style="font-size:12px;color:#e7eef1;background:rgba(255,255,255,.08);border-radius:6px;padding:3px 8px">' + c[0] + '</span>'; }).join('') + '</div>';
+      } else {
+        html = '<div style="font-weight:700;font-size:14px;color:#fff">' + name + '</div><div style="font-size:12px;color:#9fb3bf;margin-top:3px">Ask us about care options here</div>';
+      }
+      tip.innerHTML = html;
+      var x = e.clientX - rect.left, y = e.clientY - rect.top, tw = tip.offsetWidth || 220, left = x + 16;
+      if (left + tw > rect.width) left = x - tw - 16;
+      tip.style.left = Math.max(8, left) + 'px';
+      tip.style.top = Math.max(8, y - 10) + 'px';
+      tip.style.opacity = '1'; tip.style.transform = 'translateY(0)';
+    }
+    function hideTip() { tip.style.opacity = '0'; tip.style.transform = 'translateY(6px)'; }
+
+    var svg = d3.select(el).append('svg').attr('viewBox', '0 0 ' + W + ' ' + H).attr('width', '100%').style('display', 'block');
+    var defs = svg.append('defs');
+    var glow = defs.append('filter').attr('id', 'mvGlow').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
+    glow.append('feGaussianBlur').attr('stdDeviation', '2.4').attr('result', 'b');
+    var fm = glow.append('feMerge'); fm.append('feMergeNode').attr('in', 'b'); fm.append('feMergeNode').attr('in', 'SourceGraphic');
+    var projection = d3.geoNaturalEarth1();
+    var path = d3.geoPath(projection);
+
+    d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(function (world) {
+      var countries = topojson.feature(world, world.objects.countries).features;
+      projection.fitExtent([[30, 10], [W - 30, H - 70]], { type: 'Sphere' });
+      svg.append('path').datum({ type: 'Sphere' }).attr('d', path).attr('fill', '#0a141c').attr('stroke', 'rgba(255,255,255,.05)').attr('stroke-width', 1);
+      svg.append('path').datum(d3.geoGraticule10()).attr('d', path).attr('fill', 'none').attr('stroke', 'rgba(255,255,255,.035)').attr('stroke-width', .5);
+      var baseColor = function (d) { return presenceNames[d.properties.name] ? GREY_PRESENCE : GREY; };
+      svg.append('g').selectAll('path').data(countries).join('path').attr('class', 'mv-country').attr('d', path).attr('fill', baseColor)
+        .attr('stroke', '#0a121a').attr('stroke-width', .5)
+        .on('mousemove', function (e, d) { d3.select(this).attr('fill', PINK); showTip(e, d.properties.name); })
+        .on('mouseleave', function (e, d) { d3.select(this).attr('fill', baseColor(d)); hideTip(); });
+      var drawDots = function () {
+        var dg = svg.append('g');
+        Object.keys(cities).forEach(function (country) {
+          cities[country].forEach(function (c) {
+            var p = projection([c[2], c[1]]); if (!p) return;
+            var g = dg.append('g').attr('transform', 'translate(' + p[0] + ',' + p[1] + ')');
+            g.append('circle').attr('r', 5).attr('fill', 'none').attr('stroke', '#ff4d4f').attr('stroke-width', 1.4).attr('class', 'mv-dot-ring');
+            g.append('circle').attr('r', 2.6).attr('fill', '#ff4d4f').attr('filter', 'url(#mvGlow)');
+          });
+        });
+      };
+      d3.json('https://cdn.jsdelivr.net/gh/udit-001/india-maps-data@ef25ebc/geojson/india.geojson').then(function (india) {
+        var feats = (india.type === 'FeatureCollection') ? india.features : [india];
+        var polys = [];
+        feats.forEach(function (f) { var g = f.geometry || f; if (!g) return; if (g.type === 'Polygon') polys.push(g.coordinates); else if (g.type === 'MultiPolygon') g.coordinates.forEach(function (c) { polys.push(c); }); });
+        var merged = { type: 'Feature', properties: { name: 'India' }, geometry: { type: 'MultiPolygon', coordinates: polys } };
+        svg.append('g').selectAll('path').data([merged]).join('path').attr('class', 'mv-country').attr('d', path).attr('fill', GREY_PRESENCE)
+          .attr('stroke', '#0a121a').attr('stroke-width', .5)
+          .on('mousemove', function (e) { d3.select(this).attr('fill', PINK); showTip(e, 'India'); })
+          .on('mouseleave', function (e) { d3.select(this).attr('fill', GREY_PRESENCE); hideTip(); });
+        drawDots();
+      }).catch(drawDots);
+    });
+  }
+
   /* ---------------- COUNTERS ---------------- */
   function initCounters() {
     var els = document.querySelectorAll("[data-count]");
@@ -637,6 +838,7 @@
     buildBooking();
     buildBodyMap();
     renderBodyPart();
+    buildPresence();
     wireForms();
     initCounters();
     // global delegate for any [data-book] button added statically
